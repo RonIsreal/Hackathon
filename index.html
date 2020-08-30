@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <link rel="stylesheet" href="Hackathon.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<style type="text/css">
+    
+		@import url(https://fonts.googleapis.com/css?family=Work+Sans:300,600);
+ </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div id="quiz"></div>
+    <button type="button" class="btn btn-primary fix" id="previous">Prev</button>
+      <button type="button" class="btn btn-primary fix" id="next">Next</button>
+      <button type="button" class="btn btn-primary fix" id="submit">Submit Quiz</button>
+        </div>
+        <div id="results"></div>
+   
+
+
+<script type="text/javascript">
+	
+
+(function(){
+  // Functions
+  function buildQuiz(){
+    // variable to store the HTML output
+    const output = [];
+
+    // for each question...
+    myQuestions.forEach(
+      (currentQuestion, questionNumber) => {
+
+        // variable to store the list of possible answers
+        const answers = [];
+
+        // and for each available answer...
+        for(letter in currentQuestion.answers){
+
+          // ...add an HTML radio button
+          answers.push(
+            `<label>
+              <input type="radio" name="question${questionNumber}" value="${letter}">
+              ${letter} :
+              ${currentQuestion.answers[letter]}
+            </label>`
+          );
+        }
+
+        // add this question and its answers to the output
+        output.push(
+          `<div class="slide">
+            <div class="question"> ${currentQuestion.question} </div>
+            <div class="answers"> ${answers.join("")} </div>
+          </div>`
+        );
+      }
+    );
+
+    // finally combine our output list into one string of HTML and put it on the page
+    quizContainer.innerHTML = output.join('');
+  }
+
+  function showResults(){
+
+    // gather answer containers from our quiz
+    const answerContainers = quizContainer.querySelectorAll('.answers');
+
+    // keep track of user's answers
+    let numCorrect = 0;
+
+    // for each question...
+    myQuestions.forEach( (currentQuestion, questionNumber) => {
+
+      // find selected answer
+      const answerContainer = answerContainers[questionNumber];
+      const selector = `input[name=question${questionNumber}]:checked`;
+      const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+      // if answer is correct
+      if(userAnswer === currentQuestion.correctAnswer){
+        // add to the number of correct answers
+        numCorrect++;
+
+        // color the answers green
+        answerContainers[questionNumber].style.color = 'lightgreen';
+      }
+      // if answer is wrong or blank
+      else{
+        // color the answers red
+        answerContainers[questionNumber].style.color = 'red';
+      }
+    });
+
+    // show number of correct answers out of total
+    resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
+
+    
+    
+  }
+
+  function showSlide(n) {
+    slides[currentSlide].classList.remove('active-slide');
+    slides[n].classList.add('active-slide');
+    currentSlide = n;
+    if(currentSlide === 0){
+      previousButton.style.display = 'none';
+    }
+    else{
+      previousButton.style.display = 'inline-block';
+    }
+    if(currentSlide === slides.length-1){
+      nextButton.style.display = 'none';
+      submitButton.style.display = 'inline-block';
+    }
+    else{
+      nextButton.style.display = 'inline-block';
+      submitButton.style.display = 'none';
+    }
+  }
+
+  function showNextSlide() {
+    showSlide(currentSlide + 1);
+  }
+
+  function showPreviousSlide() {
+    showSlide(currentSlide - 1);
+  }
+
+  // Variables
+  const quizContainer = document.getElementById('quiz');
+  const resultsContainer = document.getElementById('results');
+  const submitButton = document.getElementById('submit');
+  const myQuestions = [
+    {
+    question: "What type of farm does Dwight own?",
+    answers: {
+      a: "Carrot Farm",
+      b: "Apple Farm",
+      c: "Potato Farm",
+      d: "Beet Farm"
+    },
+    correctAnswer: "d"
+  },
+  {
+    question: "What tattoo is Andy forced to get?",
+    answers: {
+      a: "His grandma",
+      b: "A burrito",
+      c: "A nard dog",
+      d: "A naked man"
+    },
+    correctAnswer: "c"
+  },
+  {
+    question: "Which office employee did Michael hit with his car?",
+    answers: {
+      a: "Meredith",
+      b: "Dwight",
+      c: "Ryan",
+      d: "Jim"
+    },
+    correctAnswer: "a"
+  },
+  {
+    question: "What does Michael pretend to fire Pam over in season one?",
+    answers: {
+      a: "Inappropriate Behavior",
+      b: "Stealing Pens",
+      c: "Stealing Post-It notes",
+      d: "Slacking Off"
+    },
+    correctAnswer: "c"
+  },
+  {
+    question: "What's Phyllis's maiden name?",
+    answers: {
+      a: "Joan",
+      b: "Lapin",
+      c: "James",
+      d: "She doesn't have one"
+    },
+    correctAnswer: "b"
+  },
+  {
+    question: "What did Kevin buy for himself when he got himself for Secret Santa?",
+    answers: {
+      a: "A Fedora hat",
+      b: "A back scratcher",
+      c: "A lap dance",
+      d: "A foot bath"
+    },
+    correctAnswer: "d"
+  },
+  {
+    question: "What's Stanley's morning 3 by 5?",
+    answers: {
+      a: "Iced Tea, 3 Sugars, 5 Creams",
+      b: "Coffee, 3 Sugars, 5 Creams",
+      c: "Tea, 3 Sugars, 5 Creams",
+      d: "Iced Coffee, 3 Sugars, 5 Creams"
+    },
+    correctAnswer: "a"
+  },
+  {
+    question: "What's Roy's brother name?",
+    answers: {
+      a: "Richard",
+      b: "Kenny",
+      c: "Dan",
+      d: "Isaac"
+    },
+    correctAnswer: "b"
+  },
+  {
+    question: "Who doesn't appear in the pilot episode?",
+    answers: {
+      a: "Kelly",
+      b: "Creed",
+      c: "Jan",
+      d: "They all appear"
+    },
+    correctAnswer: "a"
+  },
+  {
+    question: "What movies do the office watch on Movie Mondays?",
+    answers: {
+      a: "A Medical Video",
+      b: "Training Videos",
+      c: "Entourage",
+      d: "All of the above"
+    },
+    correctAnswer: "d"
+  },
+  ];
+
+  // Kick things off
+  buildQuiz();
+
+  // Pagination
+  const previousButton = document.getElementById("previous");
+  const nextButton = document.getElementById("next");
+  const slides = document.querySelectorAll(".slide");
+  let currentSlide = 0;
+
+  // Show the first slide
+  showSlide(currentSlide);
+
+  // Event listeners
+  submitButton.addEventListener('click', showResults);
+  previousButton.addEventListener("click", showPreviousSlide);
+  nextButton.addEventListener("click", showNextSlide);
+})();
+
+</script>
+</body>
+</html>
